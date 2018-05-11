@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>控制div属性</title>
+    <meta charset="utf-8">
+    <style type="text/css">
+        #div{
+            display: block;
+            text-align: center;
+        }
+        #div1{
+            background: black;
+            width: 100px;
+            height: 100px;
+            display: block;
+            margin: 10px auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="div">
+        <button id="b1" onclick=fun1()>变宽</button>
+        <button id="b2" onclick=fun2()>变高</button>
+        <button id="b3" onclick=fun3()>变色</button>
+        <button id="b4" onclick=fun4()>隐藏</button>
+        <button id="b5" onclick=fun5()>重置</button>
+    </div>
+        <div id="div1">
+        </div>
+</body>
+
+<script type="text/javascript">
+    var fun1 = function(){
+        doc = document.getElementById("div1")
+        doc.style.width = '200px'
+    }
+    var fun2 = function(){
+        doc = document.getElementById("div1")
+        doc.style.height = '200px'
+    }
+    var fun3 = function(){
+        doc = document.getElementById("div1")
+        doc.style.background = 'blue'
+    }
+    var fun4 = function(){
+        doc = document.getElementById("div1")
+        doc.style.visibility = "hidden"
+    }
+    var fun5 = function(){
+        location.reload()
+    }
+</script>
+</html>

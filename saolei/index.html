@@ -1,0 +1,367 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>小武的扫雷</title>
+        <style>
+            div#main{
+                background-color: white;
+                width: 800px;
+                height: 800px;
+                margin: auto;
+                text-a
+            }
+        </style>
+        <script type="text/javascript" src="./tool.js"></script>
+    </head>
+    <body>
+        <h1 style="text-align: center">小武的扫雷</h1>
+        <div id="main">
+
+            
+            <table id="mian-table">
+<!--             <td onclick="tdChange(this)" id="19_19"><img src="./mark.jpg" style="width: 100%; height: 100%;"></td>
+ -->
+            </table>
+        </div>
+    </body>
+    
+    <script>
+    var w = 20
+    var ew = Math.floor(800/w)
+    var h = 20
+    var eh = Math.floor(800/h)
+    genBoomArray = function(){
+        sum = w*h
+        _sum = sum -1
+        var BoomArray = new Array()
+
+        num = Math.floor(sum/10)
+        for(var x = 0; x <num; x++) {
+            index = Math.floor(Math.random()*_sum)
+
+
+            BoomArray.push(all[index])
+            all.splice(index,1)
+            _sum -= 1
+        }
+        return BoomArray
+    }
+
+
+    var all = new Array()
+    
+    var table = document.getElementById('mian-table')
+    tr = document.createElement('tr')
+    td = document.createElement('td')
+    td.style.backgroundColor = "#CCCCCC"
+    td.style.width = ew
+    td.style.height = eh
+
+
+    td.setAttribute('onmousedown',"tdChange(this)")
+    td.setAttribute('ondblclick',"help(this)")
+
+
+
+    for (var i = 0; i < h; i++) {
+        var tr = document.createElement('tr')
+        __id = String(i)
+        for (var j = 0; j < w; j++) {
+            // console.log(j)
+            _id = String(j)+'_'+__id
+            all.push(_id)
+            td.id = _id
+            td_tmp = td.cloneNode()
+            tr.appendChild(td_tmp)
+            }
+
+        // console.log(tr)
+        table.appendChild(tr)
+        // console.log(tr)
+    }
+    var BoomArray = genBoomArray()
+    // var BoomArray = []
+
+
+
+    tdChange = function(ele) {
+        // alert(window.event.button);
+        if (window.event.button == 0){
+            left(ele)
+        }
+        if (window.event.button == 1){
+            midle(ele)
+        }
+    }
+
+
+
+    left = function (ele) {
+        // alert(ele.button)
+        // alert(window.event.button);
+        ele.style.backgroundColor = 'white'
+        ele.style.textAlign = 'center'
+
+        var boomArray = getBoomNum(ele.id)
+        if (boomArray === "booom"){
+            alert('GG 思密达')
+            im = document.createElement('img')
+            im.src = "./boom.jpeg"
+            im.style.height = ew
+            im.style.width = eh
+            ele.appendChild(im)
+            // return 
+        }
+        boomArray = getBoomNum(ele.id).boomId
+        ele.innerHTML = boomArray.length
+        return 
+    }
+
+    midle = function(ele) {
+        if (! ele.style.background){
+
+            ele.style.background = "url('./mark.jpg')"
+            ele.style.backgroundSize = Math.floor(800/w) + "px " + Math.floor(800/w) + "px"
+        //     im = document.createElement('img')
+        //     im.src = "./mark.jpg"
+        //     im.style.height = ew
+        //     im.style.width = eh
+
+        //     ele.appendChild(im)
+        }
+        else {
+            ele.style.background = null
+            ele.style.backgroundColor = "#CCCCCC"
+        }
+    }
+
+
+    getBoomNum = function (id) {
+        if (BoomArray.indexOf(id) != -1){
+            return 'booom'
+        }
+
+        _idStr = id.split('_')
+        __id = new Array()
+        res = {'boomId':[], 'around_id':[]}
+
+        for (var i = 0; i < _idStr.length; i++){
+            __id.push(parseInt(_idStr[i]))
+        }
+        _around_id = [
+            [__id[0]+1, __id[1]],
+            [__id[0]-1, __id[1]],
+            [__id[0]-1, __id[1]-1],
+            [__id[0]+1, __id[1]-1],
+            [__id[0]-1, __id[1]+1],
+            [__id[0]+1, __id[1]+1],
+            [__id[0], __id[1]+1],
+            [__id[0], __id[1]-1]]
+
+
+
+        for (var i = 0; i < _around_id.length; i++){
+            _idStr = _around_id[i].join('_')
+            res.around_id.push(_idStr)
+            if (BoomArray.indexOf(_idStr) != -1){
+                res.boomId.push(_idStr)
+            }
+
+
+        }
+        return res
+    }
+
+    openAround = function(ele){
+        log('111')
+        around = getBoomNum(ele.id).around_id
+        log(typeof(around))
+        for (tdId of around){
+            log(tdId)
+            td = document.getElementById(tdId)
+            left(td)
+            }
+        }
+
+    flagTd = []
+    help = function(ele){
+        // if (flagTd.length >= (w*h)/2){
+        //     // flagTd = []
+        //     return
+        // }
+        if (flagTd.indexOf(ele.id) == -1){
+            flagTd.push(ele.id)
+        }
+        boomObject = getBoomNum(ele.id)
+        around = boomObject.around_id
+        boomArray = boomObject.boomId
+        openAround(ele)
+
+        for (tdId of around){
+            _boomObject = getBoomNum(tdId)
+            _boomArray = _boomObject.boomId
+            if (_boomArray.length == 0 && flagTd.indexOf(tdId) == -1){
+                td = document.getElementById(tdId)
+                try
+                    {arguments.callee(td)
+                }
+                catch{
+                    continue
+                }
+                // arguments.callee(td)
+            }
+
+        }
+    }
+
+
+
+    // help = function(ele) {
+
+
+    //     console.log('ele.id:'+ele.id)
+    //     boomObject = getBoomNum(ele.id)
+    //     boomArray = boomObject.boomId
+    //     boomaroundArray = boomObject.around_id
+
+    //     if (boomArray.length==0){
+    //         for(var i = 0; i < boomaroundArray.length; i++){
+    //             _ele = document.getElementById(boomaroundArray[i])
+    //             _boomObject = getBoomNum(_ele.id)
+    //             _boomArray = _boomObject.boomId
+    //             _boomaroundArray = _boomObject.around_id
+    //             for (var i= 0; i < _boomaroundArray; i++){
+    //                 __boomObject = getBoomNum(_ele.id)
+    //             }
+    //             if (flagTd.indexOf(_ele.id) == -1){
+    //                     boomObject = getBoomNum(_ele.id)
+    //                     boomArray = boomObject.boomId
+    //                     left(_ele)
+    //                     flagTd.push(_ele.id)
+
+    //                     if (boomArray.length==0){
+    //                         arguments.callee(_ele)
+    //                     }
+    //                 }
+    //             else{
+    //                 continue
+    //             }
+    //             }
+    //         }
+    //     else{
+    //         return
+    //         }
+    // }
+
+
+    //     if (boomArray.length == 0){
+    //         boomaroundArray = boomObject.around_id
+    //         console.log(boomaroundArray)
+    //         for(var i = 0; i < boomaroundArray.length; i++){
+    //             _ele = document.getElementById(boomaroundArray[i])
+
+    //             left(_ele)
+    //             flagTd.push(ele.id)
+    //         }
+
+    //         for(var i = 0; i < boomaroundArray.length; i++){
+    //             _ele = document.getElementById(boomaroundArray[i])
+
+    //             if (flagTd.indexOf(_ele.id) == -1){
+    //                     return arguments.callee(_ele)
+    //                 }
+                
+    //         }
+    //     }
+    //     else{
+    //         return 
+    //     }
+
+
+    // }
+
+    // help = function(ele){
+
+    //     boomObject = getBoomNum(ele.id)
+    //     if (boomObject.boomId.length != 0){
+    //         return
+    //     }
+    //     else{
+    //         boomaroundArray = boomObject.around_id
+    //         for(var i = 0; i < boomaroundArray.length; i++){
+    //             _ele = document.getElementById(boomaroundArray[i])
+    //             if (flagTd.indexOf(_ele.id) == -1){
+    //                 left(_ele)
+    //                 arguments.callee(_ele)
+    //                 flagTd.push(_ele.id)
+    //                 }
+
+    //         // return
+    //         }
+    //     }
+
+    // }
+
+    /////////////
+    // flagTd = []
+    // needClickEle = []
+    // help = function(ele){
+    //     if (!ele){
+    //         return
+    //     }
+    //     boomObject = getBoomNum(ele.id)
+    //     if (boomObject.boomId.length != 0){
+    //         //这个方块旁边有炸弹,你不能获得帮助，需要你自力更生
+    //         return
+    //     }
+    //     boomaroundArray = boomObject.around_id //周围的八个点
+    //     for (var i = 0; i < boomaroundArray.length; i++){
+    //         //把8个点全部打开
+    //         _eleId = boomaroundArray[i]
+    //         _ele = document.getElementById(_eleId)
+    //         left(_ele)
+    //         // if (needClickEle.indexOf(_eleId) == -1){
+    //         //     needClickEle.push(_eleId)
+    //         //     log('打开了：'+_ele.id)  
+    //         // }
+
+    //     }
+    //     _ZeroArray = []
+    //     for (var i = 0; i < boomaroundArray.length; i++){
+    //         //对8个点中旁边没有炸弹的点进行递归
+    //         _eleId = boomaroundArray[i]
+    //         _ele = document.getElementById(_eleId)
+    //         _boomObject = getBoomNum(_ele.id)
+
+    //         if (_boomObject.boomId.length == 0){
+    //             if (flagTd.indexOf(_ele.id) == -1){
+    //                 _ZeroArray.push(_ele)
+    //                // res = arguments.callee(_ele)
+    //                flagTd.push(_ele.id)
+    //             }
+
+    //         }
+    //     }
+    //     log(_ZeroArray)
+    //     return [arguments.callee(_ZeroArray[0]),arguments.callee(_ZeroArray[1]),arguments.callee(_ZeroArray[2]),arguments.callee(_ZeroArray[3]),arguments.callee(_ZeroArray[4]),arguments.callee(_ZeroArray[5]),arguments.callee(_ZeroArray[6]),arguments.callee(_ZeroArray[7])]
+
+    // }
+    ///////////////
+    
+    // var _help = function(L){
+    //     var res = []
+    //     for(var i=0; i<L.length; i++){
+    //         item = L[i]
+    //         if (typeof(item)=='object'){
+    //             res.push(arguments.callee(item))
+    //         }
+    //         else{
+    //             res.push(item)
+    //         }
+    //     }
+    //     return res
+    // }
+
+
+    </script>
+</html>
